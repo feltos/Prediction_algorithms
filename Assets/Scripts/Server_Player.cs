@@ -12,18 +12,19 @@ public class Server_Player : MonoBehaviour
 
     const float transportDelay = 0.1f;
     float randomSpeed;
-    float randomVelocity;
-    float randomDirectionDelay;
+    int randomDirectionDelay;
 
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
         StartCoroutine(ChangeDirection());
+        position = transform.position;
+        client_player.serverPositions.Insert(0, position);
     }
 
     void Update()
     {
-
+        
     }
 
     void FixedUpdate()
@@ -37,13 +38,16 @@ public class Server_Player : MonoBehaviour
 
     IEnumerator ChangeDirection()
     {
-        randomSpeed = Random.Range(1, 5);
-        randomVelocity = Random.Range(-1, 2);
+        randomSpeed = 5;
+
         randomDirectionDelay = Random.Range(1, 3);
+
         speed = randomSpeed;
-        velocity.x = randomVelocity;
-        velocity.y = randomVelocity;
+        velocity.x = Random.Range(-1, 2);
+        velocity.y = Random.Range(-1, 2);
+
         yield return new WaitForSeconds(randomDirectionDelay);
+
         StartCoroutine(ChangeDirection());
     }
 
@@ -52,11 +56,15 @@ public class Server_Player : MonoBehaviour
         yield return new WaitForSeconds(transportDelay);//Emission
         position = transform.position;
         client_player.serverSpeed = speed;
-        if(client_player.serverPositions.Count >= 2)
+
+       /* if(client_player.GetDelayTimer() >= 0.3f)
         {
-            client_player.serverPositions.Remove(client_player.serverPositions[0]);
-        }
-        client_player.serverPositions.Add(position);
+            client_player.serverPositions.Insert(0, position);
+            client_player.SetDelayTimer();
+        }*/
+        
+        client_player.serverPositions.Insert(1, position);
+     
     }
 
     public Vector2 GetVelocity()

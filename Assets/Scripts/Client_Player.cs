@@ -16,6 +16,9 @@ public class Client_Player : MonoBehaviour
 
     public List<Vector2> serverPositions = new List<Vector2>(2);
 
+    const float delay = 0.3f;
+    float delayTimer = 0;
+    public bool lerp = false;
 
     void Start()
     {
@@ -27,20 +30,43 @@ public class Client_Player : MonoBehaviour
     {
         //Transport
         timer += Time.deltaTime;
+        delayTimer += Time.deltaTime;
 
-        if(timer >= period)
+        //Debug.Log(serverPositions.Count);
+        Debug.Log(serverPositions[0]);
+
+        if (timer >= period)
         {
+            if(serverPositions.Count > 2)
+            {
+                serverPositions.Remove(serverPositions[1]);
+            }            
             server_player.StartCoroutine(server_player.SendDatas());
             timer = 0;
+        }
+        if (delayTimer >= delay)
+        {
+            serverPositions[0] = serverPositions[1];
+            delayTimer = 0;
         }
     }
 
     void FixedUpdate()
     {
-        transform.position = Vector3.Lerp(serverPositions[0],serverPositions[1], Time.deltaTime * serverSpeed);
+        transform.position = Vector3.Lerp(serverPositions[0], serverPositions[1], Time.deltaTime * serverSpeed);
 
         var dir = server_player.GetVelocity();
         var angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         rigidbody.MoveRotation(angle);
     }
+
+   /* public float GetDelayTimer()
+    {
+        return delayTimer;
+    }
+
+    public void SetDelayTimer()
+    {
+        delayTimer = 0;
+    } */
 }
