@@ -1,44 +1,43 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class Server : MonoBehaviour
 {
     float timerDelay;
-    const float transportDelay = 0.05f;
-    //public Vector2 baseClientPos;
-    Vector2 clientPos;
-    float timeClient1;
-    [SerializeField]Client2 client2;
+    const float serverTranportDelay = 0.05f;
+    [SerializeField]SendingClient sendingClient;
+    [SerializeField]ReceivingClient ReceivingClient;
+    float globalTime;
 
-    void Start()
+    List<ClientData> clientDataBuffer = new List<ClientData>();
+
+    private void Start()
     {
         
     }
 
     void Update()
     {
-        if (timerDelay >= transportDelay)
-        {
-            SendDatasToClients();
-        }
-    }
-
-    private void FixedUpdate()
-    {
         
+        globalTime += Time.deltaTime;
+     
+        if(clientDataBuffer.Count != 0)
+        {
+            for (int i = clientDataBuffer.Count -1 ; i >= 0; i--)
+            {
+                if (clientDataBuffer[i].clientDataTime + serverTranportDelay + SendingClient.clientTransportDelay < globalTime)
+                {
+                    ReceivingClient.ReceiveClientData(clientDataBuffer[i]);
+                    clientDataBuffer.RemoveAt(i);
+                }
+            }
+        }  
     }
 
-    public void SetClientValue(Vector2 position, float time)
+    public void AddClientValue(ClientData data)
     {
-        clientPos = position;
-        timeClient1 = time;
-        timerDelay += Time.deltaTime;
-    }
-
-    public void SendDatasToClients()
-    {
-        client2.SetOthersPosition(clientPos,timeClient1);
-        timerDelay = 0;
+        clientDataBuffer.Add(data);
     }
 }
