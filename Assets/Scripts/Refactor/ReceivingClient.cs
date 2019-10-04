@@ -8,7 +8,7 @@ public class ReceivingClient : MonoBehaviour
     Vector2 velocity;
     Rigidbody2D body;
     float globalTime = 0.0f;
-    const float lerpDelay = 0.3f;
+    const float lerpDelay = 0.6f;
 
     List<ClientData> clientDataBuffer = new List<ClientData>();
 
@@ -24,22 +24,18 @@ public class ReceivingClient : MonoBehaviour
     {
         globalTime += Time.deltaTime;
         realGlobalTime = globalTime - lerpDelay;
-    }
 
-    private void FixedUpdate()
-    {
         if (clientDataBuffer.Count >= 2)
         {
-            //TO DEBUG
-            for (int i = 0; i <= clientDataBuffer.Count; i++)
-            {                
+            for (int i = 0; i < clientDataBuffer.Count; i++)
+            {
                 if (clientDataBuffer[i].clientDataTime < realGlobalTime && clientDataBuffer[i + 1].clientDataTime > realGlobalTime)
                 {
                     float time0 = clientDataBuffer[i].clientDataTime;
                     float time1 = clientDataBuffer[i + 1].clientDataTime;
 
                     float period = time1 - time0;
-                    float delta = globalTime - time0;
+                    float delta = realGlobalTime - time0;
                     float DeltaTime = delta / period;
 
                     Vector2 pos0 = clientDataBuffer[i].pos;
@@ -48,13 +44,14 @@ public class ReceivingClient : MonoBehaviour
                     transform.position = Vector2.Lerp(pos0, pos1, DeltaTime);
                 }
             }
-                Debug.Log(clientDataBuffer.Count);
-            //TO DEBUG
         }
+    }
 
+    private void FixedUpdate()
+    {
         for (int i = clientDataBuffer.Count - 1; i >= 0; i--)
         {
-            if (clientDataBuffer[i].clientDataTime + lerpDelay * 2.0f < globalTime)
+            if (clientDataBuffer[i].clientDataTime + lerpDelay * 1.5f < globalTime)
             {
                 clientDataBuffer.RemoveAt(i);
             }

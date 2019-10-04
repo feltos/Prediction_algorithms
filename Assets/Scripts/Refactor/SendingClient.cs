@@ -12,12 +12,12 @@ public struct ClientData
 
 public class SendingClient : MonoBehaviour
 {   
-    float speed = 10;
+    float speed = 5;
     Vector2 velocity;
     Rigidbody2D body;
     Vector2 position;
 
-    public const float clientTransportDelay = 0.05f;
+    public const float clientTransportDelay = 0.15f;
 
     float emissionTimer = 0;
     const float emissionRate = 0.05f;
@@ -41,6 +41,7 @@ public class SendingClient : MonoBehaviour
     {
         globalTime += Time.deltaTime;
         emissionTimer += Time.deltaTime;
+        
 
         if(emissionTimer >= emissionRate)
         {

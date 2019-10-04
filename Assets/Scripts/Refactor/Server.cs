@@ -6,7 +6,7 @@ using System.Linq;
 public class Server : MonoBehaviour
 {
     float timerDelay;
-    const float serverTranportDelay = 0.05f;
+    float serverTranportDelay = 0.15f;
     [SerializeField]SendingClient sendingClient;
     [SerializeField]ReceivingClient ReceivingClient;
     float globalTime;
